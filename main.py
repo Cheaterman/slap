@@ -1,15 +1,11 @@
-import sys
+import config  # noqa: F401
 
 import trio
 from kivy.app import App
-from kivy.resources import resource_add_path
 
-import screens
-import widgets
+import screens  # noqa: F401
+import widgets  # noqa: F401
 from translation import TranslatedApp
-
-if getattr(sys, 'frozen', False):
-    resource_add_path(sys._MEIPASS)
 
 
 class Slap(
