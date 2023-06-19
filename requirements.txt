@@ -1,0 +1,3 @@
+kivy
+babel
+trio

@@ -1,0 +1,12 @@
+<ServerList>:
+    data: [{'name': 'hello_world'}]
+    viewclass: 'ServerItem'
+
+    RecycleBoxLayout:
+        orientation: 'vertical'
+        default_size_hint: 1, 1
+
+
+<ServerItem@Label>:
+    name: ''
+    text: _._(self.name)

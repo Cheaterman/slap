@@ -1,0 +1,6 @@
+*.sw*
+*.pyc
+*.mo
+/slap.ini
+/env/
+__pycache__/
