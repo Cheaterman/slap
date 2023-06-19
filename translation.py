@@ -2,11 +2,14 @@ import gettext
 import glob
 import os
 
+import babel.dates
+import babel.numbers
 from babel.messages import mofile, pofile
 from kivy.event import EventDispatcher
 from kivy.lang import global_idmap
 from kivy.logger import Logger
 from kivy.properties import ConfigParserProperty, StringProperty
+from kivy.resources import resource_find
 
 
 class Translator(EventDispatcher):
@@ -22,25 +25,65 @@ class Translator(EventDispatcher):
 
     translate = _
 
+    def date(self, date, strip_year=True, **kwargs):
+        if 'format' not in kwargs:
+            kwargs['format'] = 'long'
+
+        text = babel.dates.format_date(
+            date,
+            locale=self.language,
+            **kwargs
+        )
+
+        if strip_year:
+            text = text.rpartition(' ')[0].rstrip(',')
+
+        return text
+
+    def time(self, time, **kwargs):
+        return babel.dates.format_time(
+            time,
+            locale=self.language,
+            **kwargs
+        )
+
+    def datetime(self, datetime, **kwargs):
+        return babel.dates.format_datetime(
+            datetime,
+            locale=self.language,
+            **kwargs
+        )
+
+    def currency(self, amount, currency, **kwargs):
+        return babel.numbers.format_currency(
+            amount,
+            currency,
+            locale=self.language,
+            **kwargs
+        )
+
+    _BINDS = ('_', 'date', 'time', 'datetime', 'currency')
+
     def fbind(self, name, func, *args, **kwargs):
-        if name == '_':
+        if name in self._BINDS:
             self.observers.append((func, args, kwargs))
-        else:
-            super().fbind(name, func, *args, **kwargs)
+            return
+
+        super().fbind(name, func, *args, **kwargs)
 
     def funbind(self, name, func, *args, **kwargs):
-        if name == '_':
+        if name in self._BINDS:
             args = (func, args, kwargs)
             if args in self.observers:
                 self.observers.remove(args)
-        else:
-            return super().funbind(name, func, *args, **kwargs)
+
+        super().funbind(name, func, *args, **kwargs)
 
     def on_language(self, _, language):
         language = language.split('-')[0]
         self.gettext = gettext.translation(
             'messages',
-            'translations',
+            resource_find('translations'),
             languages=[language],
             fallback=True if language == 'en' else False,
         ).gettext
@@ -52,9 +95,13 @@ class Translator(EventDispatcher):
                 continue
 
     def compile_languages(self, remove_po_files=False):
-        for filename in glob.glob('translations/*/LC_MESSAGES/messages.po'):
+        translations_dir = resource_find('translations')
+
+        for filename in glob.glob(
+            f'{translations_dir}/*/LC_MESSAGES/messages.po'
+        ):
             language = filename[
-                len('translations/'):-len('/LC_MESSAGES/messages.po')
+                len(f'{translations_dir}/'):-len('/LC_MESSAGES/messages.po')
             ]
 
             Logger.info('Translator: Compiling language %s...', language)
