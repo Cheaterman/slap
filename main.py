@@ -18,6 +18,9 @@ class Slap(
             await super().async_run('trio')
             nursery.cancel_scope.cancel()
 
+    def build(self):
+        self.icon = 'assets/icon.png'
+
 
 if __name__ == '__main__':
     app = Slap()
