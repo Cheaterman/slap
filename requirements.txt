@@ -1,3 +1,4 @@
 kivy
 babel
 trio
+pywin32

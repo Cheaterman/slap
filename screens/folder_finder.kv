@@ -1,0 +1,28 @@
+<FolderFinder>:
+    BoxLayout:
+        orientation: 'vertical'
+
+        BoxLayout:
+            Label:
+                text: 'GTA: San Andreas folder path:'
+
+            Label:
+                text: root.folder_path or 'No path selected.'
+
+        BoxLayout:
+            Label:
+                text: 'Is valid GTA San Andreas directory:'
+
+            Image:
+                source: 'atlas://data/images/defaulttheme/checkbox_{}'.format('on' if root.is_valid_gtasa_dir else 'off')
+
+        BoxLayout:
+            Label:
+                text: 'Is valid SA-MP directory:'
+
+            Image:
+                source: 'atlas://data/images/defaulttheme/checkbox_{}'.format('on' if root.is_valid_samp_dir else 'off')
+
+        Button:
+            text: 'Locate GTA: San Andreas'
+            on_press: root.open_finder_dialog()

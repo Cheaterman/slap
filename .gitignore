@@ -2,5 +2,7 @@
 *.pyc
 *.mo
 /slap.ini
+/build/
+/dist/
 /env/
 __pycache__/

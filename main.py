@@ -18,6 +18,11 @@ class Slap(
             await super().async_run('trio')
             nursery.cancel_scope.cancel()
 
+    def load_kv(self, filename):
+        from kivy.core.window import Window
+        self.hwnd = Window.get_window_info().window
+        return super().load_kv(filename)
+
     def build(self):
         self.icon = 'assets/icon.png'
 
